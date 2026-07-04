@@ -6,17 +6,21 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id                 Int        @id @default(autoincrement())
-  email              String     @unique
-  password           String
+  id                       Int        @id @default(autoincrement())
+  email                    String     @unique
+  password                 String
 
-  isVerified         Boolean    @default(false)
-  verificationToken  String?
+  isVerified               Boolean    @default(false)
+  verificationToken        String?
 
-  createdAt          DateTime   @default(now())
+  forgotPasswordOTP        String?
+  forgotPasswordExpiresAt  DateTime?
 
-  passwords          Password[]
+  createdAt                DateTime   @default(now())
+
+  passwords                Password[]
 }
 
 model Password {

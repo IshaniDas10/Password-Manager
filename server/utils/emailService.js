@@ -36,6 +36,30 @@ async function sendVerificationEmail(email, token) {
   });
 }
 
+
+
+
+async function sendOTPEmail(email, otp) {
+  await transporter.sendMail({
+    from: `"Password Manager" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: "Password Reset OTP",
+    html: `
+      <h2>Password Reset</h2>
+
+      <p>Your OTP is:</p>
+
+      <h1>${otp}</h1>
+
+      <p>This OTP is valid for 10 minutes.</p>
+
+      <p>If you didn't request a password reset, you can ignore this email.</p>
+    `,
+  });
+}
+
+
 module.exports = {
   sendVerificationEmail,
+  sendOTPEmail,
 };
