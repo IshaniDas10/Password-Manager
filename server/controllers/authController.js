@@ -1,7 +1,8 @@
 const prisma = require("../config/prisma");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
+const { v4: uuidv4 } = require("uuid");
+const { sendVerificationEmail } = require("../utils/emailService");
 // Signup controller
 exports.signup = async (req, res) => {
   try {
@@ -26,7 +27,7 @@ exports.signup = async (req, res) => {
         message: "User already exists",
       });
     }
-
+const verificationToken = uuidv4();
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -34,20 +35,18 @@ exports.signup = async (req, res) => {
 
     // Create user
     const newUser = await prisma.user.create({
-      data: {
-        email,
-        password: hashedPassword,
-      },
-    });
+  data: {
+    email,
+    password: hashedPassword,
+    verificationToken,
+  },
+});
 
+await sendVerificationEmail(email, verificationToken);
 
     res.status(201).json({
-      message: "User created successfully",
-      user: {
-        id: newUser.id,
-        email: newUser.email,
-      },
-    });
+  message: "Account created. Please check your email to verify your account.",
+});
 
 
   } catch (error) {
@@ -92,7 +91,11 @@ exports.login = async (req, res) => {
       });
     }
 
-
+    if (!user.isVerified) {
+      return res.status(403).json({
+       message: "Please verify your email before logging in.",
+      });
+    }
     // Compare password
     const isPasswordCorrect = await bcrypt.compare(
       password,
@@ -135,5 +138,46 @@ exports.login = async (req, res) => {
       message: "Internal Server Error",
     });
 
+  }
+};
+
+
+// Verify Email
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    const user = await prisma.user.findFirst({
+      where: {
+        verificationToken: token,
+      },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid or expired verification link.",
+      });
+    }
+
+    await prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        isVerified: true,
+        verificationToken: null,
+      },
+    });
+
+    res.status(200).json({
+      message: "Email verified successfully! You can now log in.",
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Internal Server Error",
+    });
   }
 };
