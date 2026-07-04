@@ -19,3 +19,7 @@ app.get("/", (req, res) => {
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
 });
+
+//registering route
+const passwordRoutes = require("./routes/passwordRoutes");
+app.use("/passwords", passwordRoutes);
