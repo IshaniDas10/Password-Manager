@@ -12,4 +12,7 @@ router.put("/:id", authMiddleware, passwordController.updatePassword);
 
 router.delete("/:id", authMiddleware, passwordController.deletePassword);
 
+router.get("/:id/reveal", authMiddleware, passwordController.revealPassword);
+
 module.exports = router;
+
