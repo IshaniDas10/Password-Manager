@@ -23,3 +23,9 @@ app.listen(process.env.PORT, () => {
 //registering route
 const passwordRoutes = require("./routes/passwordRoutes");
 app.use("/passwords", passwordRoutes);
+
+const generatorRoutes = require("./routes/generatorRoutes");
+app.use("/api/generator", generatorRoutes);
+
+const strengthRoutes = require("./routes/strengthRoutes");
+app.use("/api/strength", strengthRoutes);
