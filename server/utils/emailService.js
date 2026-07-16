@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport({
 });
 
 async function sendVerificationEmail(email, token) {
-  const verificationLink = `http://localhost:5000/api/auth/verify/${token}`;
+  const verificationLink = `${process.env.FRONTEND_URL}/verify-email/${token}`;
 
   await transporter.sendMail({
     from: `"Password Manager" <${process.env.EMAIL_USER}>`,

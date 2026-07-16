@@ -18,11 +18,13 @@ model User {
   forgotPasswordOTP        String?
   forgotPasswordExpiresAt  DateTime?
 
+  revealOTP                String?
+  revealOTPExpiresAt       DateTime?
+
   createdAt                DateTime   @default(now())
 
   passwords                Password[]
 }
-
 model Password {
   id          Int      @id @default(autoincrement())
   website     String

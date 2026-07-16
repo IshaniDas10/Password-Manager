@@ -1,19 +1,33 @@
 # Dependencies
 node_modules/
+**/node_modules/
 
-# Environment variables
+# Environment Variables
 .env
+.env.*
+**/.env
+**/.env.*
+
 
 # Logs
 *.log
+npm-debug.log*
+
+# Build folders
+dist/
+build/
+client/dist/
+
+
+# Prisma Generated Client
+generated/
+server/generated/
+
 
 # OS files
 .DS_Store
 Thumbs.db
 
-# Build folders
-dist/
-build/
 
-# Generated Prisma files
-generated/
+# VS Code
+.vscode/

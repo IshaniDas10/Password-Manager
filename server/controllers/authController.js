@@ -90,10 +90,10 @@ exports.login = async (req, res) => {
     });
 
 
-    // User not found
+   // User not found
     if (!user) {
-      return res.status(404).json({
-        message: "User not found",
+      return res.status(401).json({
+        message: "Invalid email or password",
       });
     }
 
@@ -111,7 +111,7 @@ exports.login = async (req, res) => {
 
     if (!isPasswordCorrect) {
       return res.status(401).json({
-        message: "Invalid password",
+        message: "Invalid email or password",
       });
     }
     
@@ -206,10 +206,12 @@ exports.forgotPassword = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).json({
-        message: "User not found",
+      return res.status(200).json({
+        message: "If that email is registered, an OTP has been sent.",
       });
     }
+
+    // Generate a random 6-digit OTP
 
     // Generate a random 6-digit OTP
     const otp = crypto.randomInt(100000, 999999).toString();
@@ -291,16 +293,15 @@ exports.verifyOTP = async (req, res) => {
 };
 
 
-
 // Reset Password
 exports.resetPassword = async (req, res) => {
   try {
-    const { email, newPassword } = req.body;
+    const { email, otp, newPassword } = req.body;
 
     // Check input
-    if (!email || !newPassword) {
+    if (!email || !otp || !newPassword) {
       return res.status(400).json({
-        message: "Email and new password are required",
+        message: "Email, OTP, and new password are required",
       });
     }
 
@@ -312,6 +313,20 @@ exports.resetPassword = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         message: "User not found",
+      });
+    }
+
+    // Check OTP matches
+    if (!user.forgotPasswordOTP || user.forgotPasswordOTP !== otp) {
+      return res.status(400).json({
+        message: "Invalid OTP",
+      });
+    }
+
+    // Check OTP hasn't expired
+    if (!user.forgotPasswordExpiresAt || new Date() > user.forgotPasswordExpiresAt) {
+      return res.status(400).json({
+        message: "OTP has expired",
       });
     }
 

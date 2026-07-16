@@ -1,7 +1,14 @@
 const express = require("express");
 require("dotenv").config();
+const cors = require("cors");
 
 const app = express();
+
+// Allow requests from the frontend
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
 
 // Allow server to read JSON data
 app.use(express.json());
@@ -22,10 +29,11 @@ app.listen(process.env.PORT, () => {
 
 //registering route
 const passwordRoutes = require("./routes/passwordRoutes");
-app.use("/passwords", passwordRoutes);
+app.use("/api/passwords", passwordRoutes);
 
 const generatorRoutes = require("./routes/generatorRoutes");
 app.use("/api/generator", generatorRoutes);
 
 const strengthRoutes = require("./routes/strengthRoutes");
 app.use("/api/strength", strengthRoutes);
+

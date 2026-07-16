@@ -8,11 +8,17 @@ router.post("/", authMiddleware, passwordController.addPassword);
 
 router.get("/", authMiddleware, passwordController.getAllPasswords);
 
+router.get("/search", authMiddleware, passwordController.searchPasswords);
+
+router.get("/dashboard", authMiddleware, passwordController.getDashboardStats);
+
+router.post("/:id/request-reveal-otp", authMiddleware, passwordController.requestRevealOTP);
+router.post("/:id/verify-reveal-otp", authMiddleware, passwordController.verifyRevealOTP);
+
 router.put("/:id", authMiddleware, passwordController.updatePassword);
 
 router.delete("/:id", authMiddleware, passwordController.deletePassword);
 
-router.get("/:id/reveal", authMiddleware, passwordController.revealPassword);
 
 module.exports = router;
 
